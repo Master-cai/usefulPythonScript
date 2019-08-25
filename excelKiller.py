@@ -1,3 +1,4 @@
+#-*-coding:utf-8-*-
 import os
 
 import xlrd
@@ -8,6 +9,8 @@ import argparse
 
 
 def getlist(workSpaceDir):
+    # uPath = workSpaceDir.encode('unicode_escape')
+    # workSpaceDir = uPath.decode('utf-8')
     fileNames = os.listdir(workSpaceDir)
     seachedFiles = []
     for fileName in fileNames:
@@ -17,11 +20,11 @@ def getlist(workSpaceDir):
     return seachedFiles
 
 
-def get_row_data(fileList):
+def get_row_data(fileList, workPath):
     data_list = []
     for file in fileList:
         name_true = file.split('.')[0]
-        data = xlrd.open_workbook(file)
+        data = xlrd.open_workbook(os.path.join(workPath, file))
         table = data.sheets()[0]
         for i in range(table.nrows):
             name = table.row(i)[4].value
@@ -37,7 +40,7 @@ def write_rows(rowsData, outPut, oldRowNum):
     :param oldRowNum: the row number you want to begin
     :return: status code
     '''
-    workBook = copy(xlrd.open_workbook(outPut))
+    workBook = copy(xlrd.open_workbook( outPut))
     workSheet = workBook.get_sheet(0)
     borders = xlwt.Borders()
     borders.left = xlwt.Borders.THIN
@@ -60,18 +63,20 @@ def write_rows(rowsData, outPut, oldRowNum):
 
 def addarg():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-workPath', type=str, help='the path of your excels', default=os.getcwd())
-    parser.add_argument('-oldRowNum', type=str, help='the row number you want to begin', default=2)
-    parser.add_argument('-outPutFiles', type=str, help='the file you want ro save the output, it must exist',
+    parser.add_argument('-w', '--workPath', type=str, help='the path of your excels', default=os.getcwd())
+    parser.add_argument('-o', '--oldRowNum', type=int, help='the row number you want to begin', default=2)
+    parser.add_argument('-O', '--outPutFiles', type=str, help='the file you want ro save the output, it must exist',
                         default='output.xls')
     args = parser.parse_args()
     return args
 
 
 if __name__ == '__main__':
+    # print(os.getcwd())
     args = addarg()
-    output = args.outPutFiles
-    path = args.workPath
+    output = args.outPutFiles.strip('\'')
+    path = args.workPath.strip('\'')
+    print('Path:' + path)
     fileList = getlist(path)
-    rows = get_row_data(fileList)
+    rows = get_row_data(fileList, path)
     print(write_rows(rows, output, args.oldRowNum))
