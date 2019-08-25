@@ -9,7 +9,6 @@ import argparse
 
 
 def getlist(workSpaceDir):# get the excel file list
-    
     fileNames = os.listdir(workSpaceDir)
     seachedFiles = []
     for fileName in fileNames:
@@ -19,7 +18,13 @@ def getlist(workSpaceDir):# get the excel file list
     return seachedFiles
 
 
-def get_row_data(fileList, workPath, nameColNum):
+def get_row_data(fileList, workPath, nameColNum): # get the row data needed
+    '''
+    :param fileList: the file that the data exist
+    :param workPath: the dictionary the excel files exist.
+    :param nameColNum: the column number of the name column
+    :return data_list: return a list that include all the data in rows.
+    '''
     data_list = []
     for file in fileList:
         name_true = file.split('.')[0] #get name from file name
@@ -36,8 +41,10 @@ def write_rows(rowsData, outPut, nameColNum, oldRowNum, nameList):
     '''
     :param rowsData: the row data to be wrote
     :param outPut: the file you want
+    :param nameColNum: the column number that the name exist
     :param oldRowNum: the row number you want to begin
-    :return: status code
+    :param nameList: all the name you want to check should be saved in the file.
+    :return: return a list included all the name that didn`t found.
     '''
     workBook = copy(xlrd.open_workbook( outPut))
     workSheet = workBook.get_sheet(0)
@@ -76,7 +83,7 @@ def addarg():
     return args
 
 
-def check(nameList, name):
+def check(nameList, name): # used to check the name in the name list
     if name in nameList:
         nameList.remove(name)
         print('file {}.xls has been merged'.format(name))
