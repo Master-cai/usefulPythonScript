@@ -26,7 +26,7 @@ then you should make a text file named `nameList.txt`  to save all the people`s 
 
 ### feature
 
-​	According to the nameList.txt provided by you, it will print the file has been merged and the file didn\`t find which means it does\`t exist !
+​	According to the nameList.txt provided by you, it will print the file has been merged and the file didn\`t find which means it doesn\`t exist !
 
 #### Optional parameter
 
