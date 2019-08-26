@@ -34,6 +34,7 @@ def get_row_data(fileList, workPath, nameColNum): # get the row data needed
             name = table.row(i)[nameColNum].value # get name from row data
             if name == name_true:
                 data_list.append(table.row(i))
+                
     return data_list
 
 
