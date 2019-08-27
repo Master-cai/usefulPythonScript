@@ -3,7 +3,6 @@ import os
 
 import xlrd
 import xlwt
-import re
 from xlutils.copy import copy
 import argparse
 
@@ -13,9 +12,8 @@ def getlist(workSpaceDir):# get the excel file list
     fileNames = os.listdir(workSpaceDir)
     seachedFiles = []
     for fileName in fileNames:
-        ele = re.search(r"(.*?).xls$", fileName)
-        if ele:
-            seachedFiles.append(ele.group())
+        if fileName.endswith('.xls'):
+            seachedFiles.append(fileName)
     return seachedFiles
 
 
