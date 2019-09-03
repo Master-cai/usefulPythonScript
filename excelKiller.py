@@ -1,4 +1,4 @@
-#-*-coding:utf-8-*-
+# -*-coding:utf-8-*-
 import os
 
 import xlrd
@@ -7,7 +7,7 @@ from xlutils.copy import copy
 import argparse
 
 
-def getlist(workSpaceDir):# get the excel file list
+def getlist(workSpaceDir):  # get the excel file list
     fileNames = os.listdir(workSpaceDir)
     seachedFiles = []
     for fileName in fileNames:
@@ -16,7 +16,7 @@ def getlist(workSpaceDir):# get the excel file list
     return seachedFiles
 
 
-def get_row_data(fileList, workPath, nameColNum): # get the row data needed
+def get_row_data(fileList, workPath, nameColNum, nameList):  # get the row data needed
     '''
     :param fileList: the file that the data exist
     :param workPath: the dictionary the excel files exist.
@@ -25,14 +25,14 @@ def get_row_data(fileList, workPath, nameColNum): # get the row data needed
     '''
     data_list = []
     for file in fileList:
-        name_true = file.split('.')[0] #get name from file name
+        # name_true = file.split('.')[0]  # get name from file name
         data = xlrd.open_workbook(os.path.join(workPath, file))
         table = data.sheets()[0]
         for i in range(table.nrows):
-            name = table.row(i)[nameColNum].value # get name from row data
-            if name == name_true:
+            name = table.row(i)[nameColNum].value  # get name from row data
+            if name in nameList:
                 data_list.append(table.row(i))
-                
+
     return data_list
 
 
@@ -45,10 +45,10 @@ def write_rows(rowsData, outPut, nameColNum, oldRowNum, nameList):
     :param nameList: all the name you want to check should be saved in the file.
     :return: return a list included all the name that didn`t found.
     '''
-    workBook = copy(xlrd.open_workbook( outPut))
+    workBook = copy(xlrd.open_workbook(outPut))
     workSheet = workBook.get_sheet(0)
 
-    #set borders styles
+    # set borders styles
     borders = xlwt.Borders()
     borders.left = xlwt.Borders.THIN
     borders.right = xlwt.Borders.THIN
@@ -73,32 +73,37 @@ def write_rows(rowsData, outPut, nameColNum, oldRowNum, nameList):
 
 def addarg():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-w', '--workPath', type=str, help='the path of your excels', default=os.getcwd())
-    parser.add_argument('-o', '--oldRowNum', type=int, help='the row number you want to begin', default=2)
-    parser.add_argument('-c', '--column', type=int, help='the column number of the name', default=3)
+    parser.add_argument('-w', '--workPath', type=str,
+                        help='the path of your excels', default=os.getcwd())
+    parser.add_argument('-o', '--oldRowNum', type=int,
+                        help='the row number you want to begin', default=2)
+    parser.add_argument('-c', '--column', type=int,
+                        help='the column number of the name', default=3)
     parser.add_argument('-O', '--outPutFiles', type=str, help='the file you want ro save the output, it must exist',
                         default='output.xls')
     args = parser.parse_args()
     return args
 
 
-def check(nameList, name): # used to check the name in the name list
+def check(nameList, name):  # used to check the name in the name list
     if name in nameList:
         nameList.remove(name)
         print('file {}.xls has been merged'.format(name))
 
 
-
-if __name__ == '__main__':
+def main():
     args = addarg()
     output = args.outPutFiles.strip('\'')
     path = args.workPath.strip('\'')
     nameList = 'nameList.txt'
     nameColNum = args.column
     fileList = getlist(path)
-    rows = get_row_data(fileList, path, nameColNum)
+    rows = get_row_data(fileList, path, nameColNum, nameList)
     unDoneList = write_rows(rows, output, nameColNum, args.oldRowNum, nameList)
     print('*'*20 + 'unDone' + '*'*20)
     for ele in unDoneList:
         print(ele+' unDone')
 
+
+if __name__ == '__main__':
+    main()
