@@ -5,7 +5,7 @@ import openpyxl
 
 
 
-class xlsxKiller():
+class XlsxKiller():
 
     def __init__(self, fileList, workPath, nameColNum, nameList, output, oldRowNum):
         self._fileList = fileList
@@ -55,34 +55,3 @@ class xlsxKiller():
         return nameList
 
 
-def getlist(workSpaceDir):  # get the excel file list
-    fileNames = os.listdir(workSpaceDir)
-    seachedFiles = []
-    for fileName in fileNames:
-        if fileName.endswith('.xls'):
-            seachedFiles.append(fileName)
-            fileType = '.xls'
-        if fileName.endswith('.xlsx'):
-            seachedFiles.append(fileName)
-            fileType = '.xlsx'
-    return seachedFiles, fileType
-
-
-
-def main():
-    workSpaceDir = os.getcwd()
-    fileList, _ = getlist(workSpaceDir)
-    nameColNum = 3
-    nameList = 'nameList.txt'
-    output = 'output.xlsx'
-    oldRowNum = 3
-    killer = xlsxKiller(fileList, workSpaceDir, nameColNum, nameList, output, oldRowNum)
-    dataList = killer.get_row_data()
-    unDoneList = killer.write_rows(dataList)
-    print('*'*20 + 'unDone' + '*'*20)
-    for ele in unDoneList:
-        print(ele+' unDone')
-
-
-if __name__ == '__main__':
-    main()
